@@ -16,5 +16,27 @@ System Requirement
 	* colortbl
 	* fancyhdr
 	* lastpage
+	* diagbox
 
+Unique Class Options
+=====
 
+* `a3papers`
+* `namefield`
+	* `both`
+* `numbering`
+* `answers`
+
+### Global commands
+
+* `\class`
+* `\classaux`
+* `\use`
+* `\papers`
+* `\InitGeometries`
+
+### Local commands for answers option
+
+* `\backslashing`
+* `\setrowpaddingscalingfactor`
+* `\unitedcolumns`

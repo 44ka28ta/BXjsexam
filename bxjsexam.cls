@@ -18,6 +18,10 @@
  \let\@numbering\relax%
 }
 
+\DeclareOption{answers}{%
+ \let\@answers\relax%
+}
+
 \DeclareOption*{%
  \PassOptionsToClass{\CurrentOption}{bxjsarticle}%
 }
@@ -64,12 +68,6 @@
 \RequirePackage{colortbl}
 \RequirePackage[skins, hooks]{tcolorbox}
 
-% tabularx settings for tcolorbox.
-\newcolumntype{Y}{>{\centering}m{2cm}}
-\renewcommand\tabularxcolumn[1]{m{#1}}
-% TabularX Row Height
-\setlength{\extrarowheight}{5pt}
-
 \XeTeXlinebreaklocale "ja"
 
 \renewcommand\section{\@startsection{section}{1}{\z@}{\z@}{\z@}{\bfseries\large\headfont\setcounter{equation}{0}}}
@@ -93,7 +91,12 @@
 
 % Define a maketitle
 \ifdefined\@namefieldenable
-\renewcommand{\maketitle}{\@titleoption\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+ % tabularx settings for tcolorbox.
+ \newcolumntype{Y}{>{\centering}m{2cm}}
+ \renewcommand\tabularxcolumn[1]{m{#1}}
+ % TabularX Row Height
+ \setlength{\extrarowheight}{5pt}
+ \renewcommand{\maketitle}{\@titleoption\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
@@ -102,8 +105,21 @@
 試験日時: \@date\\
 \@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxxxxxxxx}}
 \end{tcolorbox}}
+ \setlength{\extrarowheight}{0pt}
 \else
  \renewcommand{\maketitle}{\@shorttitleoption}
+ % Define the layout and commands for the example answers sheet.
+ \ifdefined\@answers
+  \RequirePackage{diagbox}
+  \newcommand{\backslashing}{\backslashbox[\linewidth]{\vphantom{1}}{\vphantom{1}}}
+  \renewcommand{\tabularxcolumn}[1]{m{#1}}
+  \newcolumntype{Z}{>{\centering\arraybackslash}X}
+  \newcommand{\setrowpaddingscalingfactor}[1]{\renewcommand\arraystretch{#1}}
+  \newcounter{psectionnumber}
+  \setcounter{psectionnumber}{0}
+  \newcommand{\unitedcolumns}[1]{\hline\multicolumn{#1}{|>{\columncolor[gray]{.9}}c|}{\large \stepcounter{psectionnumber}\the\value{psectionnumber}} \tabularnewline\hline}
+ \else
+ \fi
 \fi
 
 
@@ -135,6 +151,10 @@
 \else
  \pagestyle{fancy}
 \fi
+
+
+% Double Underline
+\def\duline#1{\underline{\underline{#1}}}
 
 %%
 %% End of file `bxjsexam.cls'.
