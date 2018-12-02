@@ -1,8 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{bxjsexam}[20/11/2018 v0.3 BXJS exam class]
+\ProvidesClass{bxjsexam}[03/12/2018 v0.4 BXJS exam class]
 
 \gdef\@shorttitleoption{{\LARGE\bfseries \@title}}
-\gdef\@titleoption{}
 
 \DeclareOption{a3paper}{%
  \PassOptionsToClass{a3paper,landscape,twocolumn}{bxjsarticle}%
@@ -11,11 +10,16 @@
 }
 \DeclareOption{namefield}{%
  \let\@namefieldenable\relax%
- \DeclareOption{both}{\gdef\@titleoption{\@shorttitleoption}}
+ \DeclareOption{both}{
+  \let\@bothenable\relax}
 }
 
 \DeclareOption{numbering}{%
  \let\@numbering\relax%
+}
+
+\DeclareOption{twoside}{%
+ \let\@twosided\relax%
 }
 
 \DeclareOption{answers}{%
@@ -67,6 +71,7 @@
 \RequirePackage{tabularx}
 \RequirePackage{colortbl}
 \RequirePackage[skins, hooks]{tcolorbox}
+\RequirePackage{ifthen}
 
 \XeTeXlinebreaklocale "ja"
 
@@ -85,9 +90,26 @@
 \newcommand*{\classaux}[1]{\gdef\@classaux{#1}}
 \AtBeginDocument{\let\classaux\@classaux}
 \classaux\relax
+% Define maintitle
+\newcommand*{\maintitle}[1]{\gdef\@maintitle{#1}}
+\AtBeginDocument{\let\maintitle\@maintitle}
+\maintitle\relax
+
+\gdef\@fancymaintitle{\ifdefined\@bothenable{\LARGE\bfseries \@maintitle\vspace{0.5pc}}\else\relax\fi}
+
 
 \use{なし}
 \papers{1}
+
+\gdef\@firstpageheaderheight{6.15pc}
+
+\ifdefined\@athreeenable
+ \gdef\@firstpageshortheaderheight{4.65pc}
+\else
+ \gdef\@firstpageshortheaderheight{3.65pc}
+\fi
+
+\gdef\@otherpageheaderheight{4.0pc}
 
 % Define a maketitle
 \ifdefined\@namefieldenable
@@ -96,15 +118,11 @@
  \renewcommand\tabularxcolumn[1]{m{#1}}
  % TabularX Row Height
  \setlength{\extrarowheight}{5pt}
- \renewcommand{\maketitle}{\@titleoption\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
-指示事項\\
-1. 持ち込み可能物品: \@use\\
-2. 必要な用紙: 問題用紙\@papers 枚
-\tcblower
-題目: \@title（担当: \@author）\\
-試験日時: \@date\\
-\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxxxxxxxx}}
-\end{tcolorbox}}
+ \ifdefined\@bothenable
+  \renewcommand{\maketitle}{\vbox{\vspace{\@firstpageheaderheight}}}
+ \else
+  \renewcommand{\maketitle}{\vbox{\vspace{\@firstpageshortheaderheight}}}
+ \fi
  \setlength{\extrarowheight}{0pt}
 \else
  \renewcommand{\maketitle}{\@shorttitleoption}
@@ -137,19 +155,172 @@
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 
-\ifdefined\@numbering
- \RequirePackage{lastpage}
+\RequirePackage{zref-lastpage}
+\newcommand{\LastPageNumber}{\zref@extractdefault{LastPage}{page}{0}}
+
+
+% For calc twosided page number.
+\newcount\halfnum
+\def\divtwo#1{\ifnum#1=\numexpr(#1/2)*2 \halfnum=#1\divide \halfnum by 2\relax\the\halfnum\else\halfnum=#1\divide \halfnum by 2\advance \halfnum by 1\relax\the\halfnum\fi}
+
+\newcommand{\createnamefieldwithpagenumbertwosided}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+指示事項\\
+1. 持ち込み可能物品: \@use\\
+2. 必要な用紙: 問題用紙\@papers 枚
+\tcblower
+題目: \@title（担当: \@author）{\hfill\large\divtwo{\thepage}/\divtwo{\LastPageNumber}}\\
+試験日時: \@date\\
+\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}}
+\end{tcolorbox}}
+
+\newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+指示事項\\
+1. 持ち込み可能物品: \@use\\
+2. 必要な用紙: 問題用紙\@papers 枚
+\tcblower
+題目: \@title（担当: \@author）{\hfill\large\thepage/\LastPageNumber}\\
+試験日時: \@date\\
+\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}}
+\end{tcolorbox}}
+
+\newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+指示事項\\
+1. 持ち込み可能物品: \@use\\
+2. 必要な用紙: 問題用紙\@papers 枚
+\tcblower
+題目: \@title（担当: \@author）\\
+試験日時: \@date\\
+\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}}
+\end{tcolorbox}}
+
+
+\ifdefined\@namefieldenable
  \ifdefined\@athreeenable
-  \fancypagestyle{examstyle}{%
-  \lhead{\vspace{-1pc}\parbox{2.075\columnwidth}{\hspace{-1.5pc}\large\thepage/\pageref{LastPage}\hfill}}}
+  \ifdefined\@numbering
+   \ifdefined\@twosided
+ 
+    \fancypagestyle{examstyle}{%
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumbertwosided}}}
+ 
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi\else\fi
+     \latex@outputpage
+    }
+   \else
+    \fancypagestyle{examstyle}{%
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumber}}}
+ 
+    % After first page, put indent on the first of each page for the alignment of the name header on the background
+    %\g@addto@macro\@outputpage{\ifnum\value{page}<\LastPageNumber\noindent\vspace{-5pc}\relax\vbox{\relax}\vbox{Not Last.}\else\fi}
+    
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \latex@outputpage
+    }
+   \fi
+  \else
+   \ifdefined\@twosided
+ 
+    \fancypagestyle{examstyle}{%
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithoutpagenumber}}}
+ 
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi\else\fi
+     \latex@outputpage
+    }
+ 
+   \else
+    \fancypagestyle{examstyle}{%
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithoutpagenumber}}}
+ 
+    % After first page, put indent on the first of each page for the alignment of the name header on the background
+    %\g@addto@macro\@outputpage{\ifnum\value{page}<\LastPageNumber\noindent\vspace{-5pc}\relax\vbox{\relax}\vbox{Not Last.}\else\fi}
+    
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \latex@outputpage
+    }
+   \fi
+  \fi
  \else
-  \fancypagestyle{examstyle}{%
-  \fancyhead[LE]{\vspace{-1pc}\parbox{\columnwidth}{\hspace{-6.5pc}\large\thepage/\pageref{LastPage}\hfill}}
-  \fancyhead[RO]{\vspace{-1pc}\parbox{1.035\columnwidth}{\hfill\large\thepage/\pageref{LastPage}}}}
+  \ifdefined\@numbering
+   \ifdefined\@twosided
+  
+    \fancypagestyle{examstyle}{%
+    
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumbertwosided}}}
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     %\pgfmathparse{int(mod(\value{page},2))}%
+     %\ifnum\pgfmathresult=0\noindent\vspace{3pc}\relax\vbox{\relax TOMBO}\else\fi
+     \ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi
+     \latex@outputpage
+    }
+   \else
+    \fancypagestyle{examstyle}{%
+    
+     \fancyhead[LE]{\hspace{-5.32pc}\parbox{\columnwidth}{\createnamefieldwithpagenumber}}
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumber}}}
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \latex@outputpage
+    }
+   \fi
+  \else
+   \ifdefined\@twosided
+    \fancypagestyle{examstyle}{%
+    
+     %\fancyhead[LE]{\vspace{-1pc}\parbox{\columnwidth}{\hspace{-6.5pc}\large\thepage/\LastPageNumber\hfill}}
+     %\fancyhead[RO]{\vspace{-1pc}\parbox{1.035\columnwidth}{\hfill\large\thepage/\LastPageNumber}}
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithoutpagenumber}}}
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     %\pgfmathparse{int(mod(\value{page},2))}%
+     %\ifnum\pgfmathresult=0\noindent\vspace{3pc}\relax\vbox{\relax TOMBO}\else\fi
+     \ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi
+     \latex@outputpage
+    }
+  
+   \else
+    \fancypagestyle{examstyle}{%
+    
+     \fancyhead[LE]{\hspace{-5.32pc}\parbox{\columnwidth}{\createnamefieldwithoutpagenumber}}
+     \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithoutpagenumber}}}
+    \let\latex@outputpage\@outputpage
+    \def\@outputpage{
+     \ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \latex@outputpage
+    }
+ 
+   \fi
+  \fi
  \fi
  \pagestyle{examstyle}
 \else
- \pagestyle{fancy}
+ \ifdefined\@athreeenable
+  \ifdefined\@numbering
+   \fancypagestyle{examstyle}{%
+    \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
+    \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}}
+   \pagestyle{examstyle}
+  \else
+   \pagestyle{fancy}
+  \fi
+ \else
+  \ifdefined\@numbering
+   \fancypagestyle{examstyle}{%
+    \fancyfoot[LE]{\centering\hspace{-5.35pc}\thepage/\LastPageNumber}
+    \fancyfoot[LO]{\centering\hspace{5.35pc}\thepage/\LastPageNumber}}
+   \pagestyle{examstyle}
+  \else
+   \pagestyle{fancy}
+  \fi
+ \fi
 \fi
 
 

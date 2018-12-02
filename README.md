@@ -15,8 +15,9 @@ System Requirement
 	* tabularx
 	* colortbl
 	* fancyhdr
-	* lastpage
 	* diagbox
+	* ifthen
+	* zref-lastpage
 
 Unique Class Options
 =====
@@ -25,6 +26,7 @@ Unique Class Options
 * `namefield`
 	* `both`
 * `numbering`
+* `twoside`
 * `answers`
 
 ### Global commands
@@ -33,6 +35,7 @@ Unique Class Options
 * `\classaux`
 * `\use`
 * `\papers`
+* `\maintitle`
 * `\InitGeometries`
 
 ### Local commands for answers option
