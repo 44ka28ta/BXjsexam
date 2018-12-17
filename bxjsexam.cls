@@ -73,7 +73,12 @@
 \RequirePackage[skins, hooks]{tcolorbox}
 \RequirePackage{ifthen}
 
-\XeTeXlinebreaklocale "ja"
+\RequirePackage{ifxetex}
+
+\ifxetex
+ \XeTeXlinebreaklocale "ja"
+\else
+\fi
 
 \renewcommand\section{\@startsection{section}{1}{\z@}{\z@}{\z@}{\bfseries\large\headfont\setcounter{equation}{0}}}
 
@@ -101,12 +106,14 @@
 \use{なし}
 \papers{1}
 
+% Define First Page Header Height
 \gdef\@firstpageheaderheight{6.15pc}
 
 \ifdefined\@athreeenable
  \gdef\@firstpageshortheaderheight{4.65pc}
 \else
- \gdef\@firstpageshortheaderheight{3.65pc}
+% \gdef\@firstpageshortheaderheight{3.65pc}
+ \gdef\@firstpageshortheaderheight{4.65pc}
 \fi
 
 \gdef\@otherpageheaderheight{4.0pc}
@@ -163,26 +170,29 @@
 \newcount\halfnum
 \def\divtwo#1{\ifnum#1=\numexpr(#1/2)*2 \halfnum=#1\divide \halfnum by 2\relax\the\halfnum\else\halfnum=#1\divide \halfnum by 2\advance \halfnum by 1\relax\the\halfnum\fi}
 
+% Printed namefield
 \newcommand{\createnamefieldwithpagenumbertwosided}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
 \tcblower
-題目: \@title（担当: \@author）{\hfill\large\divtwo{\thepage}/\divtwo{\LastPageNumber}}\\
+題目: \@title（担当: \@author）\\
 試験日時: \@date\\
-\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}}
+\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}} {\hfill\large\divtwo{\thepage}/\divtwo{\LastPageNumber}}
 \end{tcolorbox}}
 
+% Printed namefield
 \newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
 \tcblower
-題目: \@title（担当: \@author）{\hfill\large\thepage/\LastPageNumber}\\
+題目: \@title（担当: \@author）\\
 試験日時: \@date\\
-\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}}
+\@class\underline{\phantom{xxxxxx}}年\@classaux\underline{\phantom{xxxxxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxxxxxx}} {\hfill\large\thepage/\LastPageNumber}
 \end{tcolorbox}}
 
+% Printed namefield
 \newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
@@ -257,7 +267,9 @@
     \def\@outputpage{
      %\pgfmathparse{int(mod(\value{page},2))}%
      %\ifnum\pgfmathresult=0\noindent\vspace{3pc}\relax\vbox{\relax TOMBO}\else\fi
-     \ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi
+     \ifodd\value{page}
+      \else\ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \fi
      \latex@outputpage
     }
    \else
@@ -281,8 +293,10 @@
     \let\latex@outputpage\@outputpage
     \def\@outputpage{
      %\pgfmathparse{int(mod(\value{page},2))}%
-     %\ifnum\pgfmathresult=0\noindent\vspace{3pc}\relax\vbox{\relax TOMBO}\else\fi
-     \ifodd\value{page}\else\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\fi
+     %\ifnum\pgfmathresult=0\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax TOMBO}\else\fi
+     \ifodd\value{page}
+      \else\ifnum\value{page}<\LastPageNumber\noindent\vspace{\@otherpageheaderheight}\relax\vbox{\relax}\else\fi
+     \fi
      \latex@outputpage
     }
   
@@ -304,19 +318,29 @@
 \else
  \ifdefined\@athreeenable
   \ifdefined\@numbering
-   \fancypagestyle{examstyle}{%
-    \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
-    \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}}
-   \pagestyle{examstyle}
+   \AtBeginDocument{\fancypagestyle{examstyle}{%
+    \ifnum\pdfstrcmp{\thepage}{\LastPageNumber}=0
+     \fancyfoot[LE]{\centering\thepage}
+     \fancyfoot[LO]{\centering\thepage}
+    \else
+     \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}
+    \fi}
+   \pagestyle{examstyle}}
   \else
    \pagestyle{fancy}
   \fi
  \else
   \ifdefined\@numbering
-   \fancypagestyle{examstyle}{%
-    \fancyfoot[LE]{\centering\hspace{-5.35pc}\thepage/\LastPageNumber}
-    \fancyfoot[LO]{\centering\hspace{5.35pc}\thepage/\LastPageNumber}}
-   \pagestyle{examstyle}
+   \AtBeginDocument{\fancypagestyle{examstyle}{%
+    \ifnum\pdfstrcmp{\thepage}{\LastPageNumber}=0
+     \fancyfoot[LE]{\centering\thepage}
+     \fancyfoot[LO]{\centering\thepage}
+    \else
+     \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}
+    \fi}
+   \pagestyle{examstyle}}
   \else
    \pagestyle{fancy}
   \fi
