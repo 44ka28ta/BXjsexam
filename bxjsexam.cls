@@ -143,6 +143,7 @@
   \newcounter{psectionnumber}
   \setcounter{psectionnumber}{0}
   \newcommand{\unitedcolumns}[1]{\hline\multicolumn{#1}{|>{\columncolor[gray]{.9}}c|}{\large \stepcounter{psectionnumber}\the\value{psectionnumber}} \tabularnewline\hline}
+  \newcommand{\unitedcolumnswithcmmt}[2]{\hline\multicolumn{\numexpr#1-1}{|>{\columncolor[gray]{.9}}c|}{\large \stepcounter{psectionnumber}\the\value{psectionnumber}} & (#2) \tabularnewline\hline}
  \else
  \fi
 \fi
@@ -171,7 +172,7 @@
 \def\divtwo#1{\ifnum#1=\numexpr(#1/2)*2 \halfnum=#1\divide \halfnum by 2\relax\the\halfnum\else\halfnum=#1\divide \halfnum by 2\advance \halfnum by 1\relax\the\halfnum\fi}
 
 % Printed namefield
-\newcommand{\createnamefieldwithpagenumbertwosided}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+\newcommand{\createnamefieldwithpagenumbertwosided}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
@@ -182,7 +183,7 @@
 \end{tcolorbox}}
 
 % Printed namefield
-\newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+\newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
@@ -193,7 +194,7 @@
 \end{tcolorbox}}
 
 % Printed namefield
-\newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.35]
+\newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
 指示事項\\
 1. 持ち込み可能物品: \@use\\
 2. 必要な用紙: 問題用紙\@papers 枚
