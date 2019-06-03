@@ -152,9 +152,11 @@
 % For the clash of rerunfilecheck and ifxetex styles in the preamble.
 % a3paper geometry and a4paper geometry with switching by a3paper option.
 \ifdefined\@athreeenable
- \newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=12.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ %\newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=12.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ \newcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=15.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
 \else
- \newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=6.in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ %\newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=6.in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ \newcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=7.4in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
 \fi
 
 \RequirePackage{fancyhdr}
@@ -276,7 +278,7 @@
    \else
     \fancypagestyle{examstyle}{%
     
-     \fancyhead[LE]{\hspace{-5.32pc}\parbox{\columnwidth}{\createnamefieldwithpagenumber}}
+     \fancyhead[LE]{\hspace{-6.81pc}\parbox{\columnwidth}{\createnamefieldwithpagenumber}}
      \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumber}}}
     \let\latex@outputpage\@outputpage
     \def\@outputpage{
@@ -324,8 +326,8 @@
      \fancyfoot[LE]{\centering\thepage}
      \fancyfoot[LO]{\centering\thepage}
     \else
-     \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
-     \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LE]{\centering\hspace{-43.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LO]{\centering\hspace{43.5pc}\thepage/\LastPageNumber}
     \fi}
    \pagestyle{examstyle}}
   \else
@@ -338,8 +340,8 @@
      \fancyfoot[LE]{\centering\thepage}
      \fancyfoot[LO]{\centering\thepage}
     \else
-     \fancyfoot[LE]{\centering\hspace{-15.5pc}\thepage/\LastPageNumber}
-     \fancyfoot[LO]{\centering\hspace{15.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LE]{\centering\hspace{-43.5pc}\thepage/\LastPageNumber}
+     \fancyfoot[LO]{\centering\hspace{43.5pc}\thepage/\LastPageNumber}
     \fi}
    \pagestyle{examstyle}}
   \else
