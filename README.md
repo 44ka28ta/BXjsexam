@@ -18,6 +18,9 @@ System Requirement
 	* diagbox
 	* ifthen
 	* zref-lastpage
+* Prerequisite packages for quenstionnaire option
+	* tikzpagenodes
+	* xcolor
 
 Unique Class Options
 =====
@@ -28,6 +31,7 @@ Unique Class Options
 * `numbering`
 * `twoside`
 * `answers`
+* `quenstionnaire`
 
 ### Global commands
 
@@ -43,3 +47,7 @@ Unique Class Options
 * `\backslashing`
 * `\setrowpaddingscalingfactor`
 * `\unitedcolumns`
+
+### Local command for quenstionnaire option
+
+* `\DrawLegalPadLines`
