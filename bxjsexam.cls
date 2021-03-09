@@ -1,10 +1,14 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{bxjsexam}[03/12/2018 v0.4 BXJS exam class]
 
-\gdef\@shorttitleoption{{\LARGE\bfseries \@title}}
+\gdef\@shorttitleoption{\underline{\bfseries\large \@title}}
+
+\DeclareOption{portrait}{%
+ \let\@portrait\relax%
+}
 
 \DeclareOption{a3paper}{%
- \PassOptionsToClass{a3paper,landscape,twocolumn}{bxjsarticle}%
+ \PassOptionsToClass{a3paper,twocolumn}{bxjsarticle}%
  %\typeout{a3paper!}%
  \let\@athreeenable\relax%
 }
@@ -61,6 +65,11 @@
 \ifdefined\@athreeenable
 \else
  \PassOptionsToClass{twoside}{bxjsarticle}
+\fi
+
+\ifdefined\@portrait
+\else
+ \PassOptionsToClass{landscape}{bxjsarticle}%
 \fi
 
 % Enable to use Japanese in Math mode.
@@ -178,14 +187,28 @@
  \fi
 \fi
 
+ \newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=6.in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ %\newcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=7.4in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+
+% Define class and student number width in name field.
+\def\numunderlinewidth{xxxxx}
+% Define name width in name field.
+\def\nameunderlinewidth{xxxxxxxxxxxxxxx}
+
 % For the clash of rerunfilecheck and ifxetex styles in the preamble.
 % a3paper geometry and a4paper geometry with switching by a3paper option.
 \ifdefined\@athreeenable
- \newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=12.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
- %\newcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=15.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ \ifdefined\@portrait
+  \renewcommand{\InitGeometries}{\geometry{textheight=14.9in, textwidth=11in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+  %\renewcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=15.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+
+  \def\numunderlinewidth{xxx}
+  \def\nameunderlinewidth{xxxxxxxxxxx}
+ \else
+  \renewcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=12.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+  %\renewcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=15.8in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
+ \fi
 \else
- \newcommand{\InitGeometries}{\geometry{textheight=9in, textwidth=6.in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
- %\newcommand{\InitGeometries}{\geometry{textheight=10.8in, textwidth=7.4in, top=0.4in, headsep=0.2in, footskip=0.3in, nohead, nofoot}}
 \fi
 
 \RequirePackage{fancyhdr}
@@ -208,35 +231,122 @@
 % Printed namefield
 \newcommand{\createnamefieldwithpagenumbertwosided}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
 指示事項\\
-1. 持ち込み可能物品: \@use\\
-2. 必要な用紙: 問題用紙\@papers 枚
-\tcblower
-題目: \@title（担当: \@author）{\hfill\large\divtwo{\thepage}/\divtwo{\LastPageNumber}}\\
-試験日時: \@date\\
-\@class\underline{\phantom{xxxxx}}年\@classaux\underline{\phantom{xxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxx}} 
-\end{tcolorbox}}
-
-% Printed namefield
-\newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
-指示事項\\
-1. 持ち込み可能物品: \@use\\
-2. 必要な用紙: 問題用紙\@papers 枚
-\tcblower
-題目: \@title（担当: \@author）{\hfill\large\thepage/\LastPageNumber}\\
-試験日時: \@date\\
-\@class\underline{\phantom{xxxxx}}年\@classaux\underline{\phantom{xxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxx}} 
-\end{tcolorbox}}
-
-% Printed namefield
-\newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.5pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
-指示事項\\
-1. 持ち込み可能物品: \@use\\
-2. 必要な用紙: 問題用紙\@papers 枚
+1. 持込物品: \@use\\
+2. 用紙: 問題用紙\@papers 枚
 \tcblower
 題目: \@title（担当: \@author）\\
-試験日時: \@date\\
-\@class\underline{\phantom{xxxxx}}年\@classaux\underline{\phantom{xxxxx}}番 氏名\underline{\phantom{xxxxxxxxxxxxxxx}}
+試験日時: \@date {\hfill\large\divtwo{\thepage}/\divtwo{\LastPageNumber}}\\
+\@class\underline{\phantom{\numunderlinewidth}}年\@classaux\underline{\phantom{\numunderlinewidth}}番 氏名\underline{\phantom{\nameunderlinewidth}} 
 \end{tcolorbox}}
+
+% Printed namefield
+\newcommand{\createnamefieldwithpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.25pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
+指示事項\\
+1. 持込物品: \@use\\
+2. 用紙: 問題用紙\@papers 枚
+\tcblower
+\@title {\hfill\large\thepage/\LastPageNumber}\\
+担当: \@author\hspace{0.5pc}/\hspace{0.5pc}\@date\\
+\@class\underline{\phantom{\numunderlinewidth}}年\@classaux\underline{\phantom{\numunderlinewidth}}番 氏名\underline{\phantom{\nameunderlinewidth}} 
+\end{tcolorbox}}
+
+% Printed namefield
+\newcommand{\createnamefieldwithoutpagenumber}{\begin{tcolorbox}[sidebyside,sharp corners, colback=white, enhanced, segmentation style={solid}, boxrule=0.25pt, valign=top, box align=base, sidebyside align=top, lefthand ratio=0.37]
+指示事項\\
+1. 持込物品: \@use\\
+2. 用紙: 問題用紙\@papers 枚
+\tcblower
+\@title \\
+担当: \@author\hspace{0.5pc}/\hspace{0.5pc}\@date\\
+\@class\underline{\phantom{\numunderlinewidth}}年\@classaux\underline{\phantom{\numunderlinewidth}}番 氏名\underline{\phantom{\nameunderlinewidth}}
+\end{tcolorbox}}
+
+\newcounter{problemctr}[section]
+
+%% problem environment
+
+\newenvironment{problem}{%
+ \refstepcounter{problemctr}
+ \textsc{(\theproblemctr)}
+}{\par\medskip}
+
+\newcommand{\filledAnswerColumn}[1][]{\def\facarg{#1}\ifx\facarg\empty\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\phantom{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX} \relax \phantom{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    XXXXXXXXXXXXXXXXXXXXXXXX}}}\else\begingroup\setlength{\fboxsep}{0.8pc}\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{#1}}\endgroup\fi}
+
+\newcommand{\shortAnswerColumn}[1][]{\def\sacarg{#1}\ifx\sacarg\empty\fbox{\parbox{2pc}{\phantom{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX} \relax \phantom{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}}}\else\begingroup\setlength{\fboxsep}{0.9pc}\framebox[2.5pc][c]{#1}\endgroup\fi}
+
+%%%
+
+\newskip\mcitemsep % glue separating the (.) from the text of each option (can be modified by user)
+\mcitemsep=.5em
+\newskip\mcinteritemskip % glue that goes between items on each line (can be modified by user)
+\mcinteritemskip=1em
+
+\newcounter{mccount}
+
+\def\mcitembox(#1)#2{\hbox{\textbf{(#1)}\hspace\mcitemsep#2}}
+
+\newcounter{mcs@lcount}
+
+\def\isc@rrect{%
+\addtocounter{mcs@lcount}{1}%
+\def\n@xt{\ifx\n@@xt!\expandafter\c@rrect\fi}%
+  \futurelet\n@@xt\n@xt}
+
+\newcommand{\createChoices}[6][0]{%
+\setcounter{mcs@lcount}{0}
+\ifnum #1=0
+\multch@ice{\isc@rrect#2}{\isc@rrect#3}{\isc@rrect#4}{\isc@rrect#5}{\isc@rrect#6}
+\else
+\multch@ice{\isc@rrect#2}{\isc@rrect#3}{\isc@rrect#4}{\isc@rrect#5}{\isc@rrect#6}
+%currently there is no loose form of regular multiple choice.
+\fi}
+
+\newcommand{\multch@ice}[5]{%
+\setbox0\mcitembox(a){#1}%
+\setbox2\mcitembox(b){#2}%
+\setbox4\mcitembox(c){#3}%
+\setbox6\mcitembox(d){#4}%
+\setbox8\mcitembox(e){#5}%
+%
+% Find the maximal length:
+%
+\dimen0=\wd0 \ifdim\wd2>\dimen0 \dimen0=\wd2 \fi\ifdim\wd4>\dimen0
+\dimen0=\wd4 \fi\ifdim\wd6>\dimen0 \dimen0=\wd6 \fi\ifdim\wd8>\dimen0
+\dimen0=\wd8 \fi%
+%
+% If the resulting length is more than \textwidth, we have to unbox the items and typeset them differently:
+%
+\ifdim\dimen0>\textwidth
+\bgroup%
+\begin{list}{\textbf{(\alph{mccount})}}{\usecounter{mccount}\setlength\labelsep\mcitemsep\setbox0=\hbox{\textbf{(a)}\hspace\mcitemsep}\setlength\labelwidth{\wd0}}
+\item #1
+\item #2
+\item #3
+\item #4
+\item #5
+\end{list}
+\egroup%
+\else
+%
+% Make all the boxes of the same length:
+%
+\wd0=\dimen0 \wd2=\dimen0 \wd4=\dimen0 \wd6=\dimen0 \wd8=\dimen0%
+\bgroup%
+\par%
+%\openup\baselineskip
+\tolerance=10000
+\noindent\box0\hskip\mcinteritemskip\penalty9000\box2\hskip\mcinteritemskip\penalty6000\box4\hskip\mcinteritemskip\penalty3000\box6\hskip\mcinteritemskip\penalty1000\box8\hfill\par\egroup%
+\fi}
+
+%%%
+
+\RequirePackage{enumitem}
+
+\gdef\Katakana#1{\expandafter\@Katakana\csname c@#1\endcsname}
+
+\gdef\@Katakana#1{\ifcase#1\or ア\or イ\or ウ\or エ\or オ\or カ\or キ\or ク\fi}
+
+\AddEnumerateCounter{\Katakana}{\@Katakana}{ア}
 
 
 \ifdefined\@questionnaire
@@ -325,7 +435,7 @@
     \else
      \fancypagestyle{examstyle}{%
      
-      \fancyhead[LE]{\hspace{-6.81pc}\parbox{\columnwidth}{\createnamefieldwithpagenumber}}
+      \fancyhead[LE]{\hspace{-5.32pc}\parbox{\columnwidth}{\createnamefieldwithpagenumber}}
       \fancyhead[LO]{\parbox{\columnwidth}{\ifnum\value{page}=1\@fancymaintitle\else\fi \createnamefieldwithpagenumber}}}
      \let\latex@outputpage\@outputpage
      \def\@outputpage{
